@@ -21,6 +21,7 @@ const DetailScreen = ({ route, navigation }) => {
 
     try {
       if (item) {
+        // 🔹 UPDATE (PATCH)
         await axios.patch(
           `${Config.BASE_URL}?id=eq.${item.id}`,
           { course, room, lecture, date, status: true },
@@ -32,6 +33,7 @@ const DetailScreen = ({ route, navigation }) => {
           }
         );
       } else {
+        // 🔹 INSERT (POST)
         await axios.post(
           Config.BASE_URL,
           { course, room, lecture, date, status: true },
@@ -53,7 +55,7 @@ const DetailScreen = ({ route, navigation }) => {
 
   return (
     <View style={{ padding: 20 }}>
-      <Text>{item ? "Edit" : "Tambah"}</Text>
+      <Text>{item ? "Edit Data" : "Tambah Data"}</Text>
 
       <TextInput placeholder="Course" value={course} onChangeText={setCourse} style={{ borderWidth: 1, marginBottom: 10 }} />
       <TextInput placeholder="Room" value={room} onChangeText={setRoom} style={{ borderWidth: 1, marginBottom: 10 }} />

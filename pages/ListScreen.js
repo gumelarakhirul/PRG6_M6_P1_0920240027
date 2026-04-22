@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,10 +10,22 @@ import {
 import axios from "axios";
 import Config from "../Config";
 import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState("");
+
+  // 🔹 ambil username dari AsyncStorage
+  const getUser = async () => {
+    const username = await AsyncStorage.getItem("user");
+    if (username) setUser(username);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -24,13 +36,14 @@ const ListScreen = ({ navigation }) => {
         },
       });
       setData(res.data);
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Gagal ambil data");
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔥 AUTO REFRESH (FIX BUG)
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -59,10 +72,26 @@ const ListScreen = ({ navigation }) => {
     ]);
   };
 
+  // 🔴 LOGOUT
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("user");
+    navigation.replace("Login");
+  };
+
   if (loading) return <ActivityIndicator />;
 
   return (
     <View style={{ flex: 1 }}>
+      {/* 🔹 HEADER */}
+      <View style={{ padding: 15, backgroundColor: "#eee" }}>
+        <Text>Halo, {user}</Text>
+
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={{ color: "red" }}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 🔹 LIST DATA */}
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
@@ -83,13 +112,16 @@ const ListScreen = ({ navigation }) => {
         )}
       />
 
+      {/* 🔹 BUTTON TAMBAH */}
       <TouchableOpacity
         onPress={() => navigation.navigate("Detail")}
-        style={{ backgroundColor: "blue", padding: 15 }}
+        style={{
+          backgroundColor: "blue",
+          padding: 15,
+          alignItems: "center",
+        }}
       >
-        <Text style={{ color: "#fff", textAlign: "center" }}>
-          Tambah Data
-        </Text>
+        <Text style={{ color: "#fff" }}>Tambah Data</Text>
       </TouchableOpacity>
     </View>
   );
