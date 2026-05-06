@@ -13,9 +13,10 @@ export default function MainApp() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="List" component={ListScreen} />
-        <Stack.Screen name="Detail" component={DetailScreen} />
+        <Stack.Screen name="List Riwayat" component={ListScreen} />
+        <Stack.Screen name="Form Laporan" component={DetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
